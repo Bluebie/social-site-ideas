@@ -1,0 +1,85 @@
+== General Description ==
+
+The document is stored as a JSON object, with three properties:\\
+**{{{id}}}**: must be "OpenLearning Page"\\
+**{{{title}}}**: equivalent to the current "title" attribute\\
+**{{{kids}}}**: a list of block level tics, as outlined below.
+
+Each block level tic has a **{{{kind}}}** property. Valid values for this property, and their meanings are defined below.
+
+----
+
+== Block level tics ==
+
+==== kind: paragraph ====
+
+Contains a list of {{{kids}}} which are all inline tics.
+
+==== kind: image ====
+
+**{{{mimetype}}}**: example is {{{"image/jpeg"}}}\\
+**{{{url}}}**: example is {{{"https://openlearning.cse.unsw.edu.au/About?action=attach&amp;download=OL-Team-600.jpg"}}}
+**{{{alt}}}**: example is {{{""}}}.
+
+==== kind: heading ====
+
+**{{{level}}}**: is an integer between 1 and 6 inclusive, mapping roughly to {{{<h1>}}} through {{{<h6>}}} in html\\
+**{{{text}}}**: is a plaintext string.
+
+==== kind: rule ====
+
+has no other properties, maps roughly to {{{<hr>}}} in html.
+
+==== kind: list ====
+
+**{{{style}}}**: a string which is one of {{{bullet}}}, {{{numeric}}}, {{{alphabetic}}}.\\
+**{{{kids}}}**: an array of list items. Each list item is an array of inline items. An array of arrays.
+
+List items can also contain other {{{kind: list}}}'s as their last item, despite not being inline items.
+
+==== kind: widget ====
+
+**{{{id}}}**: widget identifier string\\
+**{{{configuration}}}**: defaults to {width:100, height:100} - or widgets can declare their own default
+
+{{{id}}} tells system which widget it is. {{{configuration}}} describes the widget. width and height are mandatory properties. A widget's inspector can add any extra properties, and the configuration object will be given to the widget at runtime so it may load any special information.
+
+Widgets should be used for things like blocks of formatted source code, virtual machine emulators, blog post authoring devices, physics simulations.
+
+==== kind: comment ====
+
+**{{{text}}}**: string of comment - generally only shown inside editor.
+
+----
+
+== Inline Tics ==
+
+==== kind: text ====
+
+**{{{text}}}**: A plaintext string\\
+**{{{style}}}**: An object with any of these properties: (default {})
+
+* **{{{bold}}}**, **{{{italic}}}**, **{{{underline}}}**, **{{{superscript}}}**, **{{{subscript}}}**, **{{{monospace}}}**, **{{{strike}}}**: All booleans, default false.
+* **{{{typefaceSize}}}**: integer, default 0. Positive number causes bigger text, negative causes smaller text.
+* **{{{fillColor}}}**, **{{{backgroundColor}}}**, **{{{outlineColor}}}**: {{{[r,g,b]}}} integer color array, default website theme.
+
+//A note on security//: style parameters are usually transformed in to CSS statements eventually. It is important that care is taken not to trust user input here. In some browsers (okay, just IE) CSS statements could cause code execution. Make sure those colours are numeric!
+
+=== Links ===
+
+Links are an extension of "text", and can have both the {{{text}}} and {{{style}}} properties.
+
+==== kind: weblink ====
+
+**{{{url}}}**: a destination web url\\
+**{{{text}}}**: if omitted, defaults to url.
+
+==== kind: wikilink ====
+
+**{{{destination}}}**: URI for another local wiki page.\\
+**{{{text}}}**: if omitted, defaults to page title.
+
+==== kind: personlink ====
+
+**{{{person}}}**: unique user profile identifier\\
+Link text is always person's currently set name.
